@@ -24,7 +24,7 @@ class ColumnExtract(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None, **trans_params):
-        return X[self.columns]
+        return X[self.columns].copy()
 
 
 class ColumnTypeExtract(BaseEstimator, TransformerMixin):
@@ -44,9 +44,9 @@ class ColumnTypeExtract(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None, **trans_params):
         if self.types == 'Category':
-            return X.select_dtypes(include=['object', 'category'])
+            return X.select_dtypes(include=['object', 'category']).copy()
         if self.types == 'Numerical':
-            return X.select_dtypes(exclude=['object', 'category'])
+            return X.select_dtypes(exclude=['object', 'category']).copy()
         return X
 
 
