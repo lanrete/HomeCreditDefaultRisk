@@ -22,3 +22,20 @@ kaggle API
 ```
 kaggle competitions download -c home-credit-default-risk
 ```
+## Status
+
+### Current Score & Location on LB
+
+_Standing are by the time of submission._
+
+|Submission     |Local AUC|PB AUC|Standing  |Pipeline|
+|---------------|:-------:|:----:|:--------:|:------:|
+|1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM|
+
+
+### 2018-06-16
+
+- Explored the base dataset `application_train.csv`.
+- Built a simple model as baseline with Light-GBM
+- `AUC = 0.7548` on local testing set
+- `AUC = 0.745` on PB
