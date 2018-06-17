@@ -3,6 +3,9 @@
 """  
 Created by Lanrete on 2018/6/16
 """
+# TODO  Enhance the script structure
+# TODO  Can we store the GridParams externally as json file? So we don't need to change the code rapidly
+# TODO  Save the result
 
 import numpy as np
 import pandas as pd
@@ -44,12 +47,20 @@ PIPELINE = Pipeline([
     ('Classifier', LGBMClassifier())
 ])
 
-params_grid = {
-    'Features__Numerical__Impute__func': [np.median, np.mean],
-    'Classifier__num_leaves': [31, 63, 127],
-    'Classifier__learning_rate': [0.1, 0.3, 0.03, 0.01],
-    'Classifier__n_estimators': [100, 200, 500, 50],
-}
+params_grid = [
+    {
+        'Features__Numerical__Impute__func': [np.median, np.mean],
+        'Classifier__num_leaves': [31, 63, 127],
+        'Classifier__learning_rate': [0.1, 0.3],
+        'Classifier__n_estimators': [100, 50],
+    },
+    {
+        'Features__Numerical__Impute__func': [np.median, np.mean],
+        'Classifier__num_leaves': [31, 63, 127],
+        'Classifier__learning_rate': [0.03, 0.01],
+        'Classifier__n_estimators': [200, 500],
+    },
+]
 
 
 if __name__ == '__main__':
@@ -59,6 +70,7 @@ if __name__ == '__main__':
         scoring='roc_auc',
         cv=5, verbose=3)
     clf.fit(x_train, y_train)
+    print(clf.best_params_)
     best_clf = clf.best_estimator_
 
     y_test_pred = best_clf.predict_proba(x_test)[:, 1]
