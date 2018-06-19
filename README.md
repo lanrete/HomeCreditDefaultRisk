@@ -24,13 +24,22 @@ kaggle competitions download -c home-credit-default-risk
 ```
 ## Status
 
+### To-do & Diffculties
+
+- Understand the different data structure and key columns.
+- Too many features if we use all dataset, will need to select the features, to do that we have two methods. One is to use the scikit-learn built-in feature selection method. The other one is to use `feature_importance` from model outputs.
+- For scikit-learn method, we need to impute the missing values in a logical way, since scikit-learn framework doesn't work with missing values.
+- To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
+
+
 ### Current Score & Location on LB
 
 _Standing are by the time of submission._
 
-|Submission     |Local AUC|PB AUC|Standing  |Pipeline|
-|---------------|:-------:|:----:|:--------:|:------:|
-|1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM|
+|Submission     |Local AUC|LB AUC|Standing  |Pipeline            |
+|:-------------:|:-------:|:----:|:--------:|:------------------:|
+|1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM            |
+|with_bureau    |0.7651   |0.753 |1953/2906 |LightGBM with bureau|
 
 
 ### 2018-06-16
@@ -38,4 +47,13 @@ _Standing are by the time of submission._
 - Explored the base dataset `application_train.csv`.
 - Built a simple model as baseline with Light-GBM
 - `AUC = 0.7548` on local testing set
-- `AUC = 0.745` on PB
+- `AUC = 0.745` on Public leaderboard
+
+
+### 2018-06-19
+
+- Check the share [kernel](https://www.kaggle.com/jsaguiar/updated-0-792-lb-lightgbm-with-simple-features) by aguiar, the structure seems very clear and could be use within this my own repository.
+- Build features from `buearu.csv` and use these features into current pipeline
+- `AUC = 0.7651` on local testing set
+- `AUC = 0.753` on Public leaderboard
+
