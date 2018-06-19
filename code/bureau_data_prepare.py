@@ -23,7 +23,7 @@ def agg_bureau():
         Aggregated DataFrame
     """
     # For numerical columns, set up the basic aggregation function
-    bureau = pd.read_csv('./data/bureau.csv')
+    bureau = pd.read_csv('../data/bureau.csv')
     print(f'bureau.csv ==> {bureau.shape}')
     bureau, bureau_cc = category_processing(bureau)
 
