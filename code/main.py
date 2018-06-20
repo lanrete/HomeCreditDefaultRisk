@@ -8,14 +8,14 @@ import gc
 import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 
 from utility import timer
 from bureau_data_prepare import agg_bureau
-from pipeline import fit_pipeline_parameters
+from pipeline import fit_pipeline
 
 
 DATA_PATH = '../data'
+FIT_PARAMS = False
 
 
 def main():
@@ -36,14 +36,13 @@ def main():
     y = train_base['TARGET']
     del train_base['TARGET']
     y = LabelEncoder().fit_transform(y)
-    x_train, x_test, y_train, y_test = train_test_split(train_base, y, test_size=0.33, random_state=2203)
-    del y
-    gc.collect()
 
-    with timer('Grid Searching Pipeline with parameter grids'):
-        fit_pipeline_parameters(
-            x_train, y_train, x_test, y_test,
-            predict=True, x_score=test_base, submission='with_bureau'
+    header = 'Grid Searching Pipeline with parameter grids' if FIT_PARAMS else 'Fitting and predicting'
+
+    with timer(header):
+        fit_pipeline(
+            train_base, y,
+            predict=True, x_score=test_base, fit_params=FIT_PARAMS
         )
 
 

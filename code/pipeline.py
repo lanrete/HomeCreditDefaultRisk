@@ -3,7 +3,8 @@
 """  
 Created by Lanrete on 2018/6/16
 """
-# TODO  Save the result
+
+import datetime as dt
 
 import numpy as np
 import pandas as pd
@@ -56,18 +57,26 @@ params_grid = [
 ]
 
 
-def fit_pipeline_parameters(x_train, y_train, x_test, y_test, predict=False, x_score=None, submission=None):
-    PIPELINE.fit(x_train, y_train)
-    clf = GridSearchCV(
-        PIPELINE, params_grid,
-        scoring='roc_auc',
-        cv=5, verbose=1)
-    clf.fit(x_train, y_train)
-    print(clf.best_params_)
-    best_clf = clf.best_estimator_
-    y_test_pred = best_clf.predict_proba(x_test)[:, 1]
-    print(f'AUC on testing set: {roc_auc_score(y_score=y_test_pred, y_true=y_test)}')
+def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=False):
+    if fit_params:
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=2028)
+        PIPELINE.fit(x_train, y_train)
+        clf = GridSearchCV(
+            PIPELINE, params_grid,
+            scoring='roc_auc',
+            cv=5, verbose=1)
+        clf.fit(x_train, y_train)
+        print(clf.best_params_)
+        best_clf = clf.best_estimator_
+        y_test_pred = best_clf.predict_proba(x_test)[:, 1]
+        print(f'AUC on testing set: {roc_auc_score(y_score=y_test_pred, y_true=y_test)}')
+    else:
+        best_clf = PIPELINE
+        predict = True
+        if submission is None:
+            submission = dt.datetime.now().strftime('%Y%m%d_%H%M%S')
     if predict:
+        best_clf.fit(x, y)
         y_pred = best_clf.predict_proba(x_score)[:, 1]
         result_df = pd.DataFrame({'TARGET': y_pred})
         result_df.index = x_score.index
@@ -83,7 +92,7 @@ def main():
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=2136)
     assert len(x_train) == len(y_train)
     assert len(x_test) == len(y_test)
-    fit_pipeline_parameters(x_train, y_train, x_test, y_test)
+    fit_pipeline(x_train, y_train, x_test, y_test)
 
 
 if __name__ == '__main__':

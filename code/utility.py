@@ -15,6 +15,7 @@ import pandas as pd
 @contextmanager
 def timer(title):
     t0 = time.time()
+    print(f'Start {title}.')
     yield
     print(f'{title} done in {time.time() - t0:.2f} seconds.')
 
