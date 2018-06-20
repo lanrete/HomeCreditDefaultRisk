@@ -15,7 +15,7 @@ from pipeline import fit_pipeline
 
 
 DATA_PATH = '../data'
-FIT_PARAMS = False
+FIT_PARAMS = True
 
 
 def main():

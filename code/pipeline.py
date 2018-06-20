@@ -92,7 +92,7 @@ def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=
         clf = GridSearchCV(
             PIPELINE, PARAMS_GRID,
             scoring='roc_auc',
-            cv=5, verbose=1)
+            cv=5, verbose=2)
         clf.fit(x_train, y_train)
         print(clf.best_params_)
         best_clf = clf.best_estimator_
@@ -101,15 +101,16 @@ def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=
     else:
         best_clf = PIPELINE
         predict = True
-        if submission is None:
-            submission = dt.datetime.now().strftime('%Y%m%d_%H%M%S')
     if predict:
         best_clf.fit(x, y)
         print(f'AUC on whole set: {roc_auc_score(y_score=best_clf.predict_proba(x)[:, 1], y_true=y)}')
         y_pred = best_clf.predict_proba(x_score)[:, 1]
         result_df = pd.DataFrame({'TARGET': y_pred})
         result_df.index = x_score.index
+        if submission is None:
+            submission = dt.datetime.now().strftime('%Y%m%d_%H%M%S')
         result_df.to_csv(f'../submission/{submission}.csv', index=True)
+    return best_clf
 
 
 def main():
