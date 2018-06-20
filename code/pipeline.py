@@ -39,7 +39,7 @@ PIPELINE = Pipeline([
     ('Classifier', LGBMClassifier())
 ])
 
-params_grid = [
+PARAMS_GRID = [
     # {
     #     'Features__Numerical__Impute__func': [np.median, np.mean],
     #     'Classifier__num_leaves': [31, 63, 127],
@@ -52,17 +52,45 @@ params_grid = [
 
         'Classifier__num_leaves': [31, 63],
         'Classifier__learning_rate': [0.03, 0.01],
-        'Classifier__n_estimators': [200, 500],
+        'Classifier__n_estimators': [500],
     },
 ]
 
 
 def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=False):
+    """
+    Main container for the model fitting.
+    PIPELINE and PARAMS_GRID are pre-defined in this script and will be called in this function.
+
+    Parameters
+    ----------
+    x : pd.DataFrame
+        X in the training base
+    y : pd.DataFrame
+        Target in the training base
+    predict : bool, default False
+        If True, the fitted model will be called again to give prediction on the validation/scoring set
+    x_score : pd.DataFrame, default None
+        The validation/scoring set, ignored if `predict=False`
+    submission : string, default None
+        The name of the submission file, ignored if `predict=False`
+        The scoring result will be saved as '../submission/{submission}.csv'
+        If `submission=None`, the timestamp will be used as the name.
+        Timestamp format is %Y%m%d_%H%M%S
+    fit_params : bool, default False
+        If True, PARAMS_GRID will be used to find the best hyper-parameters.
+                 In this case, a 5-fold CV will be used to find the best hyper-parameters
+        If False, the default parameters set in PIPELINE will be directly used as the model
+
+    Returns
+    -------
+    None
+    """
     if fit_params:
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=2028)
         PIPELINE.fit(x_train, y_train)
         clf = GridSearchCV(
-            PIPELINE, params_grid,
+            PIPELINE, PARAMS_GRID,
             scoring='roc_auc',
             cv=5, verbose=1)
         clf.fit(x_train, y_train)
@@ -77,6 +105,7 @@ def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=
             submission = dt.datetime.now().strftime('%Y%m%d_%H%M%S')
     if predict:
         best_clf.fit(x, y)
+        print(f'AUC on whole set: {roc_auc_score(y_score=best_clf.predict_proba(x)[:, 1], y_true=y)}')
         y_pred = best_clf.predict_proba(x_score)[:, 1]
         result_df = pd.DataFrame({'TARGET': y_pred})
         result_df.index = x_score.index
