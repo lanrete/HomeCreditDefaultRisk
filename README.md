@@ -40,6 +40,7 @@ _Standing are by the time of submission._
 |:-------------:|:-------:|:----:|:--------:|:------------------:|
 |1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM            |
 |with_bureau    |0.7651   |0.753 |1953/2906 |LightGBM with bureau|
+|20180621_121117|0.7748   |0.775 |1616/3051 |LightGBM            |
 
 
 ### 2018-06-16
@@ -52,8 +53,30 @@ _Standing are by the time of submission._
 
 ### 2018-06-19
 
-- Check the share [kernel](https://www.kaggle.com/jsaguiar/updated-0-792-lb-lightgbm-with-simple-features) by aguiar, the structure seems very clear and could be use within this my own repository.
+- Check the share [kernel](https://www.kaggle.com/jsaguiar/updated-0-792-lb-lightgbm-with-simple-features) by aguiar, 
+    the structure seems very clear and could be use within this my own repository.
 - Build features from `buearu.csv` and use these features into current pipeline
 - `AUC = 0.7651` on local testing set
 - `AUC = 0.753` on Public leaderboard
 
+### 2018-06-20
+
+- Adding some basic features generated from the base dataset. Including:
+  1. The percentage of ammunity amount in the total income
+  2. The payment ratio, or how soon the payment will end
+  3. The percentage of total income in the credit amount
+- Applied the opt bayes parameters as the hyper-parameters for Light-GBM as starting point
+- Best hyper-parameters:
+   - __Learning_rate__: 0.01
+   - __n_estimators__: 2500
+- `AUC = 0.7748` on local testing set
+- `AUC = 0.8421` on whole training set
+- `AUC = 0.775` on Public leaderboard
+
+We observerd a somewhat heavy over-fitting issues. This could be caused by 
+1. Too much estiamtors in the model itself.
+2. Too much features.
+
+We need to implement the feature selection framework to reduce the over-fitting issues. 
+Right now we only have features from `bureau.csv` and `application_{train|test}.csv`, in future
+we will have much more features and much worse over-fitting if no feature selection is applied.
