@@ -21,7 +21,6 @@ from pipeline_utility.category_transformer import CategoryToIntTransformer
 
 from lightgbm import LGBMClassifier
 
-
 PIPELINE = Pipeline([
     ('Features', FeatureUnion([
         ('Categorical', Pipeline([
@@ -36,7 +35,22 @@ PIPELINE = Pipeline([
         ]))
     ])),
     # ('Select Feature', SelectPercentile(score_func=chi2, percentile=50)),
-    ('Classifier', LGBMClassifier())
+    # Parameters came from the opt_bayes kernel
+    # Which doesn't seems to make much sense to me :)
+    ('Classifier', LGBMClassifier(
+        nthread=4,
+        n_estimators=10000,
+        learning_rate=0.02,
+        num_leaves=34,
+        colsample_bytree=0.9497036,
+        subsample=0.8715623,
+        max_depth=8,
+        reg_alpha=0.041545473,
+        reg_lambda=0.0735294,
+        min_split_gain=0.0222415,
+        min_child_weight=39.3259775,
+        silent=-1,
+        verbose=-1, ))
 ])
 
 PARAMS_GRID = [
@@ -50,9 +64,9 @@ PARAMS_GRID = [
         # 'Features__Numerical__Impute__func': [np.median, np.mean],
         # 'Select Feature__percentile': [10, 25, 50, 80, 100],
 
-        'Classifier__num_leaves': [31, 63],
-        'Classifier__learning_rate': [0.03, 0.01],
-        'Classifier__n_estimators': [500],
+        # 'Classifier__num_leaves': [31, 63],
+        'Classifier__learning_rate': [0.03, 0.01, 0.02],
+        'Classifier__n_estimators': [1000, 2000, 2500, 5000],
     },
 ]
 
