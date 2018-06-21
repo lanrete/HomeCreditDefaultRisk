@@ -9,10 +9,10 @@ import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder
 
+from config import FIT_PARAMS
 from utility import timer
 from bureau_data_prepare import agg_bureau
 from pipeline import fit_pipeline
-
 
 DATA_PATH = '../data'
 
@@ -52,4 +52,4 @@ def main(fit_params):
 
 
 if __name__ == '__main__':
-    main(fit_params=True)
+    main(fit_params=FIT_PARAMS)
