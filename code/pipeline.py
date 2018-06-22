@@ -4,6 +4,8 @@
 Created by Lanrete on 2018/6/16
 """
 
+# TODO  Save the CV result for refrence
+
 import datetime as dt
 
 import pandas as pd
@@ -51,6 +53,7 @@ def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=
         clf = GridSearchCV(
             PIPELINE, PARAMS_GRID,
             scoring='roc_auc',
+            return_train_score=True,
             cv=5, verbose=2)
         clf.fit(x_train, y_train)
         print(clf.best_params_)

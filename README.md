@@ -27,9 +27,8 @@ kaggle competitions download -c home-credit-default-risk
 ### To-do & Diffculties
 
 - Understand the different data structure and key columns.
-- Too many features if we use all dataset, will need to select the features, to do that we have two methods. One is to use the scikit-learn built-in feature selection method. The other one is to use `feature_importance` from model outputs.
-- For scikit-learn method, we need to impute the missing values in a logical way, since scikit-learn framework doesn't work with missing values.
 - To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
+- Genearte features from `previous_application.csv`.
 
 
 ### Current Score & Location on LB
@@ -81,3 +80,13 @@ We observerd a somewhat heavy over-fitting issues. This could be caused by
 We need to implement the feature selection framework to reduce the over-fitting issues. 
 Right now we only have features from `bureau.csv` and `application_{train|test}.csv`, in future
 we will have much more features and much worse over-fitting if no feature selection is applied.
+
+
+### 2018-06-22
+
+- Write the `ModelBasedFeatureSelector` to select features according to the feature importances from a
+  rough model.
+- With LGBM as the model for feature selections, use GridSearchCV to find the best number of features to keep
+- Reduce the over-fitting problem. But still exist especially if we use the hyper parameters from bayes_opt
+- `AUC = 0.7750` on local testing set
+- `AUC = 0.776` on PUblic leaderboard

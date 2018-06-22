@@ -4,6 +4,8 @@
 Created by Lanrete on 2018/6/15
 """
 
+# TODO  Add previous_application features when ready
+
 import gc
 import pandas as pd
 
