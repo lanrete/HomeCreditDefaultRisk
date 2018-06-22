@@ -58,7 +58,6 @@ class ModelBasedFeatureSelector(BaseEstimator, TransformerMixin):
             self.number_features = int(total_columns * self.percent_features)
         if self.number_features > total_columns:
             self.number_features = total_columns
-            raise RuntimeWarning(f'{self.number_features} > {total_columns} which is the total features available')
 
         self.selected_columns = column_index[-self.number_features:]
         return self
