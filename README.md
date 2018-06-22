@@ -36,11 +36,12 @@ kaggle competitions download -c home-credit-default-risk
 
 _Standing are by the time of submission._
 
-|Submission     |Local AUC|LB AUC|Standing  |Pipeline            |
-|:-------------:|:-------:|:----:|:--------:|:------------------:|
-|1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM            |
-|with_bureau    |0.7651   |0.753 |1953/2906 |LightGBM with bureau|
-|20180621_121117|0.7748   |0.775 |1616/3051 |LightGBM            |
+|Submission     |Local AUC|LB AUC|Standing  |Pipeline                   |
+|:-------------:|:-------:|:----:|:--------:|:-------------------------:|
+|1_20180616_1455|0.7548   |0.745 |1880/2630 |LightGBM                   |
+|with_bureau    |0.7651   |0.753 |1953/2906 |LightGBM with bureau       |
+|20180621_121117|0.7748   |0.775 |1616/3051 |LightGBM                   |
+|20180622_181112|0.7750   |0.776 |1635/3134 |LightGBM + FeatureSelection|
 
 
 ### 2018-06-16
