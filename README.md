@@ -90,3 +90,11 @@ we will have much more features and much worse over-fitting if no feature select
 - Reduce the over-fitting problem. But still exist especially if we use the hyper parameters from bayes_opt
 - `AUC = 0.7750` on local testing set
 - `AUC = 0.776` on PUblic leaderboard
+
+
+### 2018-06-27
+
+- Explore `previous_application.csv` on previous application.
+- For flag features, the dataset is not consistent, meaning some features use `Y` / `N` as the flag, while other use `0` and `1` as the flag. This needs be standardized before aggregating the features.
+- For all features (across all dataset), `XAP` and `XNA` are considered as missing.
+- For date related features (across all dataset), `365243` should be considered as `np.inf`.
