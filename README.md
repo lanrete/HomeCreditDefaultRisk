@@ -27,8 +27,17 @@ kaggle competitions download -c home-credit-default-risk
 ### To-do & Diffculties
 
 - Understand the different data structure and key columns.
-- To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
-- Genearte features from `previous_application.csv`.
+- To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take 
+care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
+- <del>Genearte features from `previous_application.csv`.</del>
+- Feature selection should be performed at different levels. When aggregating the datasets, mutiple features will be 
+generated for one single columns. For example, the `min`, `max` and `mean` value will be generated for `AMT_ANNUITY` 
+at `SK_ID_CURR` level for dataset `previous_application.csv`. Only one feature should be kept to reduce overfitting
+since they all carried similar information. We only need to find the one with highest predictive power.
+To do so, we could try:
+  - Use `chi2`, `iv` or similar metrics to evalute predictive power. Need to take
+    care of missing value in this way.
+  - Use `feature_importance` from Light-GBM. Don't need to take care of missing value this way.
 
 
 ### Current Score & Location on LB
@@ -98,3 +107,16 @@ we will have much more features and much worse over-fitting if no feature select
 - For flag features, the dataset is not consistent, meaning some features use `Y` / `N` as the flag, while other use `0` and `1` as the flag. This needs be standardized before aggregating the features.
 - For all features (across all dataset), `XAP` and `XNA` are considered as missing.
 - For date related features (across all dataset), `365243` should be considered as `np.inf`.
+
+
+### 2018-06-29
+
+- Refactor the EAD part on `previous_application.csv`, moving the data-cleaning part into production script.
+- Data-cleaning includes
+  0. Converting numerical flags into categorical flags
+  0. Converting missing flag such as `XAP` and `XNA` into `np.nan`
+  0. Converting `365243` into `np.nan` for days features
+- Adding features into current pipeline, model was fitted roughtly without `GridSearch` for initial result
+- `AUC = 0.8115` on whole training set
+- `AUC = 0.775` on Public leaderboard
+- Do notice a reduce in previous over-fitting issue
