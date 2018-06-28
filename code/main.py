@@ -14,6 +14,7 @@ from sklearn.preprocessing import LabelEncoder
 from config import FIT_PARAMS
 from utility import timer
 from bureau_data_prepare import agg_bureau
+from pre_application_data_prepare import agg_pre_application
 from pipeline import fit_pipeline
 
 DATA_PATH = '../data'
@@ -38,6 +39,13 @@ def main(fit_params):
         train_base = train_base.join(bureau_df, how='left')
         test_base = test_base.join(bureau_df, how='left')
         del bureau_df
+        gc.collect()
+
+    with timer('Aggregating previous_application.csv'):
+        previous_application_df = agg_pre_application()
+        train_base = train_base.join(previous_application_df, how='left')
+        test_base = test_base.join(previous_application_df, how='left')
+        del previous_application_df
         gc.collect()
 
     y = train_base['TARGET']
