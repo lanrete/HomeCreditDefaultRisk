@@ -22,10 +22,12 @@ def agg_bureau():
     agg_df : pd.DataFrame
         Aggregated DataFrame
     """
-    # For numerical columns, set up the basic aggregation function
     bureau = pd.read_csv('../data/bureau.csv')
-    print(f'bureau.csv ==> {bureau.shape}')
+    print(f'|--bureau.csv ==> {bureau.shape}')
+
+    print('|--Making dummies for categorical data...')
     bureau, bureau_cc = category_processing(bureau)
+    # For numerical columns, set up the basic aggregation function
 
     numerical_dict = {
         'CREDIT_DAY_OVERDUE': ['max', 'mean'],
@@ -47,13 +49,16 @@ def agg_bureau():
     # For categorical columns, adding up the observation
     categorical_dict = {dummy_column: ['sum'] for dummy_column in bureau_cc}
 
+    print('|--Aggregating features on whole data...')
     agg_df = bureau.groupby(by='SK_ID_CURR').agg({**numerical_dict, **categorical_dict})
     agg_df.columns = pd.Index([f'BUREAU_{e[0]}_{e[1].upper()}' for e in agg_df.columns.tolist()])
 
+    print('|--Aggregating features for active credit...')
     active_df = bureau[bureau['CREDIT_ACTIVE_Active'] == 1]
     active_agg_df = active_df.groupby(by='SK_ID_CURR').agg(numerical_dict)
     active_agg_df.columns = pd.Index([f'BUREAU_ACTIVE_{e[0]}_{e[1].upper()}' for e in active_agg_df.columns.tolist()])
 
+    print('|--Aggregating featrures for closed credit...')
     closed_df = bureau[bureau['CREDIT_ACTIVE_Closed'] == 1]
     closed_agg_df = closed_df.groupby(by='SK_ID_CURR').agg(numerical_dict)
     closed_agg_df.columns = pd.Index([f'BUREAU_CLOSED_{e[0]}_{e[1].upper()}' for e in closed_agg_df.columns.tolist()])
@@ -65,6 +70,7 @@ def agg_bureau():
 
 
 if __name__ == '__main__':
-    with timer('Aggregating Bureau.csv'):
+    with timer('Aggregating bureau.csv'):
         bureau_agg_df = agg_bureau()
-        bureau_agg_df.to_csv('./data/_agg_bureau.csv')
+        print('|--Saving the aggregated files...')
+        bureau_agg_df.to_csv('../data/_agg_bureau.csv')
