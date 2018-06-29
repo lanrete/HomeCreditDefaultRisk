@@ -30,6 +30,7 @@ kaggle competitions download -c home-credit-default-risk
 - To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take 
 care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
 - <del>Genearte features from `previous_application.csv`.</del>
+- Generate features from `installments_payments.csv`
 - Feature selection should be performed at different levels. When aggregating the datasets, mutiple features will be 
 generated for one single columns. For example, the `min`, `max` and `mean` value will be generated for `AMT_ANNUITY` 
 at `SK_ID_CURR` level for dataset `previous_application.csv`. Only one feature should be kept to reduce overfitting
@@ -50,6 +51,7 @@ _Standing are by the time of submission._
 |with_bureau    |0.7651   |0.753 |1953/2906 |LightGBM with bureau       |
 |20180621_121117|0.7748   |0.775 |1616/3051 |LightGBM                   |
 |20180622_181112|0.7750   |0.776 |1635/3134 |LightGBM + FeatureSelection|
+|20180630_025150|0.7770   |0.779 |1651/3592 |~ + previous_application   |
 
 
 ### 2018-06-16
