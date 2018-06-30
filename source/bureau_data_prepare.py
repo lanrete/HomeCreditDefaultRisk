@@ -8,10 +8,19 @@ Aggregate into SK_ID_CURR level
 
 """
 
+import numpy as np
 import pandas as pd
 
 from utility import timer
 from utility import category_processing
+
+
+def bureau_clean_up(df: pd.DataFrame):
+    df.replace(to_replace=['XAP', 'XNA'], value=[np.nan, np.nan], inplace=True)
+    for col in df.columns:
+        if col.startswith('DAYS_'):
+            df[col].replace(to_replace=365243, value=np.nan, inplace=True)
+    return df
 
 
 def agg_bureau():
@@ -24,6 +33,9 @@ def agg_bureau():
     """
     bureau = pd.read_csv('../data/bureau.csv')
     print(f'|--bureau.csv ==> {bureau.shape}')
+
+    print('|--Cleaning up the dataset...')
+    previous_application = bureau_clean_up(bureau)
 
     print('|--Making dummies for categorical data...')
     bureau, bureau_cc = category_processing(bureau)
@@ -51,17 +63,23 @@ def agg_bureau():
 
     print('|--Aggregating features on whole data...')
     agg_df = bureau.groupby(by='SK_ID_CURR').agg({**numerical_dict, **categorical_dict})
-    agg_df.columns = pd.Index([f'BUREAU_{e[0]}_{e[1].upper()}' for e in agg_df.columns.tolist()])
+    agg_df.columns = pd.Index(
+        [f'_BUREAU_{e[0]}_{e[1].upper()}' for e in agg_df.columns.tolist()]
+    )
 
     print('|--Aggregating features for active credit...')
     active_df = bureau[bureau['CREDIT_ACTIVE_Active'] == 1]
     active_agg_df = active_df.groupby(by='SK_ID_CURR').agg(numerical_dict)
-    active_agg_df.columns = pd.Index([f'BUREAU_ACTIVE_{e[0]}_{e[1].upper()}' for e in active_agg_df.columns.tolist()])
+    active_agg_df.columns = pd.Index(
+        [f'_BUREAU_ACTIVE_{e[0]}_{e[1].upper()}' for e in active_agg_df.columns.tolist()]
+    )
 
     print('|--Aggregating featrures for closed credit...')
     closed_df = bureau[bureau['CREDIT_ACTIVE_Closed'] == 1]
     closed_agg_df = closed_df.groupby(by='SK_ID_CURR').agg(numerical_dict)
-    closed_agg_df.columns = pd.Index([f'BUREAU_CLOSED_{e[0]}_{e[1].upper()}' for e in closed_agg_df.columns.tolist()])
+    closed_agg_df.columns = pd.Index(
+        [f'_BUREAU_CLOSED_{e[0]}_{e[1].upper()}' for e in closed_agg_df.columns.tolist()]
+    )
 
     agg_df = agg_df.join(active_agg_df, how='left')
     agg_df = agg_df.join(closed_agg_df, how='left')

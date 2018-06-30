@@ -92,9 +92,9 @@ def agg_pre_application():
 
         'DAYS_DECISION': ['max', 'min', 'mean'],
         # 'DAYS_FIRST_DRAWING': ['max', 'min', 'mean'],
-        # 'DAYS_FIRST_DUE': ['max', 'min', 'mean'],
+        'DAYS_FIRST_DUE': ['max', 'min', 'mean'],
         # 'DAYS_LAST_DUE_1ST_VERSION': ['max', 'min', 'mean'],
-        # 'DAYS_LAST_DUE': ['max', 'min', 'mean'],
+        'DAYS_LAST_DUE': ['max', 'min', 'mean'],
         'DAYS_TERMINATION': ['max', 'min', 'mean'],
 
         'CNT_PAYMENT': ['max', 'min', 'mean'],
@@ -106,21 +106,21 @@ def agg_pre_application():
     print('|--Aggregating features on whole data...')
     agg_df = previous_application.groupby(by=['SK_ID_CURR']).agg({**numerical_dict, **categorical_dict})
     agg_df.columns = pd.Index(
-        [f'PRE_APP_{e[0]}_{e[1].upper()}' for e in agg_df.columns.tolist()]
+        [f'_PRE_APP_{e[0]}_{e[1].upper()}' for e in agg_df.columns.tolist()]
     )
 
     print('|--Aggregating features for approved contract...')
     approved_df = previous_application[previous_application['NAME_CONTRACT_STATUS_Approved'] == 1]
     approved_agg_df = approved_df.groupby(by=['SK_ID_CURR']).agg(numerical_dict)
     approved_agg_df.columns = pd.Index(
-        [f'PRE_APP_Approved_{e[0]}_{e[1].upper()}' for e in approved_agg_df.columns.tolist()]
+        [f'_PRE_APP_Approved_{e[0]}_{e[1].upper()}' for e in approved_agg_df.columns.tolist()]
     )
 
     print('|--Aggregating featrures for rejected contract...')
     rejected_df = previous_application[previous_application['NAME_CONTRACT_STATUS_Approved'] == 0]
     rejected_agg_df = rejected_df.groupby(by=['SK_ID_CURR']).agg(numerical_dict)
     rejected_agg_df.columns = pd.Index(
-        [f'PRE_APP_Rejected_{e[0]}_{e[1].upper()}' for e in rejected_agg_df.columns.tolist()]
+        [f'_PRE_APP_Rejected_{e[0]}_{e[1].upper()}' for e in rejected_agg_df.columns.tolist()]
     )
 
     agg_df = agg_df.join(approved_agg_df, how='left')
