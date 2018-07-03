@@ -4,7 +4,7 @@
 Created by Lanrete on 2018/6/16
 """
 
-# TODO  Save the CV result for refrence
+# TODO  Save the CV result for reference
 
 import datetime as dt
 
@@ -62,9 +62,9 @@ def fit_pipeline(x, y, predict=False, x_score=None, submission=None, fit_params=
         print(f'AUC on testing set: {roc_auc_score(y_score=y_test_pred, y_true=y_test)}')
     else:
         best_clf = PIPELINE
+        best_clf.fit(x, y)
         predict = True
     if predict:
-        best_clf.fit(x, y)
         print(f'AUC on whole set: {roc_auc_score(y_score=best_clf.predict_proba(x)[:, 1], y_true=y)}')
         y_pred = best_clf.predict_proba(x_score)[:, 1]
         result_df = pd.DataFrame({'TARGET': y_pred})
