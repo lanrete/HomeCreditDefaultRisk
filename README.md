@@ -28,18 +28,20 @@ kaggle competitions download -c home-credit-default-risk
 
 - Understand the different data structure and key columns.
 - To use `feature_importance` from model outputs, we don't need to impute the missing value since Light-GBM can take 
-care of missing values by design. But we can't directly use it into the Pipeline, or I hadn't figure out how.
-- <del>Genearte features from `previous_application.csv`.</del>
+care of missing values by design. But we can't directly use it into the Pipeline, 
+or I hadn't figure out how.
+- __DONE__ Genearte features from `previous_application.csv`. 
 - Generate features from `installments_payments.csv`
-- Feature selection should be performed at different levels. When aggregating the datasets, mutiple features will be 
+- __DONE__ Feature selection should be performed at different levels. When aggregating the datasets, mutiple features will be 
 generated for one single columns. For example, the `min`, `max` and `mean` value will be generated for `AMT_ANNUITY` 
 at `SK_ID_CURR` level for dataset `previous_application.csv`. Only one feature should be kept to reduce overfitting
 since they all carried similar information. We only need to find the one with highest predictive power.
 To do so, we could try:
-  - Use `chi2`, `iv` or similar metrics to evalute predictive power. Need to take
+  - __DONE__ Use `chi2`, `iv` or similar metrics to evalute predictive power. Need to take
     care of missing value in this way.
-  - Use `feature_importance` from Light-GBM. Don't need to take care of missing value this way.
-
+  - __DONE__ Use `feature_importance` from Light-GBM. Don't need to take care of missing value this way.
+- Test if `ByGroupSelector` does improve the performance or not
+- Add customized function for selecting features into `ByGroupSelector`
 
 ### Current Score & Location on LB
 
@@ -122,3 +124,23 @@ we will have much more features and much worse over-fitting if no feature select
 - `AUC = 0.8115` on whole training set
 - `AUC = 0.775` on Public leaderboard
 - Do notice a reduce in previous over-fitting issue
+
+### 2018-07-03
+
+- Finally wrote the transformer to select one feature from group of aggregated features.
+- Fit the model with the new pipeline with similar hyper-parameters.
+- `AUC = 0.7769` on local testing set
+- `AUC = 0.8536` on whole training set
+- `AUC = 0.771` on Public leaderboard
+- Compare with previous models, the gap between `AUC` on testing set and whole sample is smaller, which 
+means we have less over-fitting issue with the new feature selectors
+- However, the are some drops on Public leaderboard, compared with the same pipeline without ByGroupSelector,
+the `AUC` are `0.771` and `0.779` respectedly.
+- Might need to add more nodes into the pipeline with ByGroupSelector to see if help improves the performance.
+
+#### Detailed comparision
+
+|Pipeline |# Base estimator|Training set `AUC`|Whole set `AUC`|Public leaderboard `AUC`|
+|:-------:|:--------------:|:----------------:|:-------------:|:----------------------:|
+|Without `ByGroupSelector`|2500|0.7770|0.870|0.779|
+|With `ByGroupSelector`|2500|0.7769|0.8536|0.771|
