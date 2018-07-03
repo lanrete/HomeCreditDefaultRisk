@@ -105,5 +105,102 @@ temp_df.notnull().sum()
 
 # %%
 
-# %%
+from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import minmax_scale
 
+processed = temp_df
+
+processed = Imputer().fit_transform(processed)
+# processed = minmax_scale(processed)
+
+# %%
+from sklearn.feature_selection import chi2, f_classif
+
+chi2_score = chi2(processed, y)
+f_score = f_classif(processed, y)
+
+# %%
+chi2_score
+
+# %%
+f_score
+
+
+# %%
+def select_feature(_x, _y):
+    col_list = _x.columns
+    _x = Imputer().fit_transform(_x)
+    _x = minmax_scale(_x)
+    score = f_classif(_x, _y)[0]
+    return col_list[score.argmax()]
+
+
+selected = select_feature(temp_df, y)
+
+# %%
+print(selected)
+
+# %%
+temp_df = x[filter_df['Column']]
+
+
+# %%
+def select_feature(_x, _y):
+    col_list = _x.columns
+    _x = Imputer().fit_transform(_x)
+    _x = minmax_scale(_x)
+    score = f_classif(_x, _y)[0]
+    return score
+
+
+score_list = select_feature(temp_df, y)
+
+# %%
+filter_df['Score'] = score_list
+selected_features = filter_df.groupby(by=['Suffix']).apply(
+    lambda d: d.loc[d['Score'].idxmax(), 'Column']
+)
+
+# %%
+filter_df.loc[filter_df['Suffix'] == '_BUREAU_ACTIVE_AMT_CREDIT_MAX_OVERDUE']
+
+
+# %%
+def get_features_list(_x, _y):
+    col_df = pd.DataFrame({
+        'Column': _x.columns
+    })
+    col_df['Suffix'] = col_df['Column'].apply(
+        lambda col: '_'.join(col.split('_')[:-1])
+    )
+    suffix_count = col_df['Suffix'].value_counts()
+    col_df['Need Selection'] = col_df['Suffix'].apply(
+        lambda suffix: suffix_count[suffix] > 1 and suffix.startswith('_')
+    )
+    selection_df = col_df[col_df['Need Selection']].copy()
+
+    part_x = _x[selection_df['Column']]
+    processed_part_x = Imputer().fit_transform(part_x)
+    processed_part_x = minmax_scale(processed_part_x)
+    score = f_classif(processed_part_x, _y)[0]
+    selection_df['Score'] = score
+
+    selected_features = selection_df.groupby(by=['Suffix']).apply(
+        lambda part_df: part_df.loc[part_df['Score'].idxmax(), 'Column']
+    )
+
+    ret_list = list(selected_features)
+    ret_list.extend(col_df.loc[~col_df['Need Selection'], 'Column'])
+    return ret_list
+
+
+selected_features = get_features_list(num_x, y)
+
+# %%
+len(selected_features)
+
+# %%
+no_need_df = col_df.loc[~col_df['Need Selection'], 'Column']
+
+# %%
+# TODO  Sumarize function get_features_list into transformer to be used in pipeline
