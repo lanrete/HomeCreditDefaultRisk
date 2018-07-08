@@ -35,7 +35,7 @@ def agg_bureau():
     print(f'|--bureau.csv ==> {bureau.shape}')
 
     print('|--Cleaning up the dataset...')
-    previous_application = bureau_clean_up(bureau)
+    bureau = bureau_clean_up(bureau)
 
     print('|--Making dummies for categorical data...')
     bureau, bureau_cc = category_processing(bureau)
