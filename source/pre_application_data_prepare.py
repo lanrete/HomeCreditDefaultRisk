@@ -59,7 +59,7 @@ def pre_app_clean_up(df: pd.DataFrame):
 
 def agg_pre_application():
     """
-        aggregation function to apply on each group of 'SK_ID_CURR'
+    aggregation function to apply on each group of 'SK_ID_CURR'
     Returns
     -------
     agg_df : pd.DataFrame
